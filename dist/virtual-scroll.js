@@ -207,6 +207,7 @@ var VirtualScrollComponent = (function () {
         var el = this.parentScroll instanceof Window ? document.body : this.parentScroll || this.element.nativeElement;
         var d = this.calculateDimensions();
         var items = this.items || [];
+        var filterAttr = this.filterAttr || '';
         var offsetTop = this.getElementsOffset();
         var elScrollTop = this.parentScroll instanceof Window
             ? (window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0)
@@ -239,8 +240,15 @@ var VirtualScrollComponent = (function () {
         if (start !== this.previousStart || end !== this.previousEnd || forceViewportUpdate === true) {
             this.zone.run(function () {
                 // update the scroll list
-                var _end = end >= 0 ? end : 0; // To prevent from accidentally selecting the entire array with a negative 1 (-1) in the end position. 
-                _this.viewPortItems = items.slice(start, _end);
+                var _end = end >= 0 ? end : 0; // To prevent from accidentally selecting the entire array with a negative 1 (-1) in the end position.
+                var filteredItems = [];
+                if (filterAttr) {
+                    filteredItems = items.filter(function (item) {
+                        return !item[filterAttr];
+                    });
+                }
+                filteredItems = filteredItems.length > 0 ? filteredItems : items;
+                _this.viewPortItems = filteredItems.slice(start, _end);
                 _this.update.emit(_this.viewPortItems);
                 // emit 'start' event
                 if (start !== _this.previousStart && _this.startupLoop === false) {
@@ -291,6 +299,7 @@ var VirtualScrollComponent = (function () {
         'bufferAmount': [{ type: core_1.Input },],
         'scrollAnimationTime': [{ type: core_1.Input },],
         'doNotCheckAngularZone': [{ type: core_1.Input },],
+        'filterAttr': [{ type: core_1.Input },],
         'parentScroll': [{ type: core_1.Input },],
         'update': [{ type: core_1.Output },],
         'change': [{ type: core_1.Output },],

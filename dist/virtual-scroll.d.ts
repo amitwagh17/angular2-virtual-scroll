@@ -15,6 +15,7 @@ export declare class VirtualScrollComponent implements OnInit, OnChanges, OnDest
     bufferAmount: number;
     scrollAnimationTime: number;
     doNotCheckAngularZone: boolean;
+    filterAttr: string;
     private refreshHandler;
     private _parentScroll;
     parentScroll: Element | Window;
